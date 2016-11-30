@@ -50,4 +50,4 @@ def fs_load_batch(code_list=None,start=None,end=None,table_name=None):
     return result
 
 if __name__ == '__main__':
-    rse=fs_load_batch(code_list=['002125'],start='2016-07-07',end='2016-11-25',table_name='fs_st_data')
+    rse=fs_load_batch(code_list=['000798'],start='2016-3-16',end='2016-11-28',table_name='fs_st_data')
