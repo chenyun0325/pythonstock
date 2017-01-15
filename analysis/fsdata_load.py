@@ -7,7 +7,8 @@ import sql
 import logging as log
 import traceback
 import pandas as pd
-
+import sys
+import json
 def fs_load(code =None,date =None,retry_count =5,pause=1):
     cur = time.strftime('%Y-%m-%d', time.localtime(time.time()))
     if cur==date:
@@ -49,5 +50,44 @@ def fs_load_batch(code_list=None,start=None,end=None,table_name=None):
                 continue
     return result
 
+def fs_load_batch_v(code_list=None,start=None,end=None):
+    result=[]
+    format_x="%Y-%m-%d"
+    for code in code_list:
+        first=datetime.datetime.strptime(start,format_x)
+        last=datetime.datetime.strptime(end,format_x)
+        while first<=last:
+            try:
+                date_str=first.strftime(format_x)
+                first=first+datetime.timedelta(days=1)
+                fs_df=fs_load(code,date_str)
+                if (fs_df is not None)&(len(fs_df.index)>4):#没有数据情况返回
+                    result.append(fs_df)
+            except Exception,e:
+                log.error(code)
+                log.error(first)
+                log.error(last)
+                log.error(traceback.print_exc())
+                log.error(e)
+                continue
+    return result
+
 if __name__ == '__main__':
-    rse=fs_load_batch(code_list=['000798'],start='2016-3-16',end='2016-11-28',table_name='fs_st_data')
+    res=fs_load_batch_v(sys.argv[1].split(','),start=sys.argv[2],end=sys.argv[3])
+    for df in res:
+        for i, row in df.iterrows():
+            code = row['code']
+            json_dic = {}
+            json_dic['code'] = row['code']
+            json_dic['date'] = row['date']
+            json_dic['time'] = row['time']
+            json_dic['price'] = row['price']
+            json_dic['change'] = row['change']
+            json_dic['volume'] = row['volume']
+            json_dic['amount'] = row['amount']
+            json_dic['type'] = row['type']
+            json_str=json.dumps(json_dic)
+            print json_str
+
+
+

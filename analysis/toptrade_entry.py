@@ -22,9 +22,8 @@ if __name__=='__main__':
         fuc_param = sys.argv[3]
         sql_flag = 'append'
         df={}
-        print("---------")
+        #print("---------")
         if flag=='1':
-            print('xx')
             df = tp.top_list(date=fuc_param)
         if flag=='2':
             df = tp.cap_list(days=int(fuc_param))
@@ -37,9 +36,8 @@ if __name__=='__main__':
         if flag=='5':
             df = tp.stock_basics()
             sql_flag = sys.argv[4]
-        print(df)    
-        res = tp.save_db(data=df,table_name=table_name,con=sql.engine,flag=sql_flag)    
+        print(df)
+        res = tp.save_db(data=df,table_name=table_name,con=sql.engine,flag=sql_flag)
     except Exception,e:
           logging.error(sys.argv)
           logging.error(traceback.print_exc())
-            
